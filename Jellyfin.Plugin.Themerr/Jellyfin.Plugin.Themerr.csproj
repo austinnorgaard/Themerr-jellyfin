@@ -8,12 +8,22 @@
     <Authors />
     <Company />
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <!-- The EF Core pins below are a deliberate downgrade to match the shipped
+         server; NU1605 is the warning for exactly that and is expected here. -->
+    <NoWarn>$(NoWarn);NU1605</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Jellyfin.Controller" Version="12.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.10" /> <!-- Must match version from Jellyfin.Controller -->
+    <!-- Pinned DOWN on purpose. Jellyfin.Database.Implementations 12.0.0 asks for
+         EF Core 10.0.11, but the Jellyfin 12.0.0 SERVER ships 10.0.10, so building
+         against the package graph produces a plugin that cannot load:
+         "Could not load file or assembly Microsoft.EntityFrameworkCore, Version=10.0.11".
+         These two lines hold the compile-time reference at what the server actually has. -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.10" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="JsonExtensions" Version="1.2.3" />
     <PackageReference Include="YoutubeExplode" Version="6.6.2" />
